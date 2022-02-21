@@ -8,7 +8,8 @@ def parser(reaction):
         elements = []
         counts = []
         ongoing = False
-        for i in range(len(entity)):
+        i = 0
+        while i < len(entity):
             if entity[i].isnumeric():
                 cnt = ''
                 end = len(entity)
@@ -19,6 +20,7 @@ def parser(reaction):
                     cnt += str(entity[j])
                 counts.append(int(cnt))
                 i = end
+                print(cnt)
                 ongoing = False
             else:
                 if ongoing:
@@ -30,6 +32,7 @@ def parser(reaction):
                 else:  
                     elements.append(entity[i])
                     ongoing = True
+                i += 1
         if ongoing:
             counts.append(1) 
         for i in range(len(elements)):

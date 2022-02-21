@@ -10,11 +10,12 @@ class Reaction:
         self.products = parser(products)
 
 a = "Ca2PhO2G4K3O5+H2O"
+
 b = "CE25PO2GhZ33O53+H23710"
+# P, O, Z, Gh
 
-# test = Reaction(a, b)
-
-# print(test.reactants, test.products)
+test = Reaction(a, b)
+print(test.reactants, '\n', test.products)
 
 # for each reactant, set up an equation on a matrix
 
@@ -33,13 +34,6 @@ for i in range(row):
     for j in range(col):
         grid[i][j] = Fraction(grid[i][j]) 
 
-# print(type(grid[2][2]))
-
-def Print():
-    global grid
-    for row in grid:
-        print(row)
-
 def gaussian_elimination(grid):
     global row, col
     for i in range(row-1):
@@ -52,4 +46,5 @@ def gaussian_elimination(grid):
         
 gaussian_elimination(grid)
 
-Print()
+for row in grid:
+    print(row)
