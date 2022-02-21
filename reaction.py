@@ -10,12 +10,12 @@ class Reaction:
 
 a = "Ca2PhO2G4K3O5+H2Ca5O"
 
-b = "CE25PO2GhZ33O53Ca5+H23710Pa"
+b = "CE25PO2GhZ33O53Ca5+H23Pa42P34"
 # bug/edge case is when a new element appears in reactants that are not the first reactant in the list
 # bruh
 
 test = Reaction(a, b)
-print(test.reactants, '\n', test.products)
+# print(test.reactants, '\n', test.products)
 
 # for each reactant, set up an equation on a matrix
 
@@ -42,17 +42,27 @@ def gaussian_elimination(grid):
             ratio = -1*grid[j][i]/current
             for k in range(col):
                 grid[j][k] += ratio*grid[i][k]
-        
+
+def extract_answers(grid):
+    answers = []
+    answers.append(grid[row-1][col-1]/grid[row-1][col-2])
+    for i in range(row-2, -1, -1): 
+        value_rn = grid[i][col-1] 
+        ptr = 0 
+        for j in range(row-i-1):
+            value_rn -= answers[ptr]*grid[i][col-2-j]
+            ptr += 1
+        answers.append(value_rn/grid[i][col-2-(row-i-1)])
+    return answers[::-1]
+
 gaussian_elimination(grid)
 
-for row in grid:
-    print(row)
+for line in grid:
+    print(line)
 
-# answers = []
-# for i in range():
-    
-# reverse(answers)
-# print(answers)
+answers = extract_answers(grid)
+print("Answers are:", answers)
+
 
 # setting up equations to solve 
 # each element in each reactant and product
@@ -61,4 +71,3 @@ for row in grid:
 
 # here, a,b,c,d... = coefficients in front of the ath, bth, cth, dth... reactant (count in each reactant)
 # dimensions of grid = number of unique reactants
-
