@@ -13,6 +13,9 @@ class Fraction:
         gcd_2 = gcd(int(nTop), int(nBottom))
         nTop /= gcd_2
         nBottom /= gcd_2
+        if (nBottom < 0):
+            nTop *= -1
+            nBottom *= -1
         return Fraction(int(nTop), int(nBottom))
 
     def __sub__(self, other):
@@ -21,6 +24,9 @@ class Fraction:
         gcd_2 = gcd(int(nTop), int(nBottom))
         nTop /= gcd_2
         nBottom /= gcd_2
+        if (nBottom < 0):
+            nTop *= -1
+            nBottom *= -1
         return Fraction(int(nTop), int(nBottom))
 
     def __mul__(self, other):
@@ -47,6 +53,9 @@ class Fraction:
         gcd_2 = gcd(int(nTop), int(nBottom))
         nTop /= gcd_2
         nBottom /= gcd_2
+        if (nBottom < 0):
+            nTop *= -1
+            nBottom *= -1
         return Fraction(int(nTop), int(nBottom))
 
     def __repr__(self):

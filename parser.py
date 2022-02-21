@@ -1,14 +1,13 @@
 
-import re
-
 def parser(reaction):
     species = reaction.split('+')
-    cnt_g = dict()
+    cnt_char = dict()
     for entity in species:
         elements = []
         counts = []
         ongoing = False
         i = 0
+        cnt_l = dict()
         while i < len(entity):
             if entity[i].isnumeric():
                 cnt = ''
@@ -20,7 +19,6 @@ def parser(reaction):
                     cnt += str(entity[j])
                 counts.append(int(cnt))
                 i = end
-                print(cnt)
                 ongoing = False
             else:
                 if ongoing:
@@ -36,7 +34,14 @@ def parser(reaction):
         if ongoing:
             counts.append(1) 
         for i in range(len(elements)):
-            if elements[i] not in cnt_g.keys():
-                cnt_g[elements[i]] = 0
-            cnt_g[elements[i]] += counts[i]
-    return cnt_g
+            if elements[i] not in cnt_l.keys():
+                cnt_l[elements[i]] = 0
+            cnt_l[elements[i]] += counts[i]
+        for key in cnt_char.keys():
+            if key not in cnt_l.keys():
+                cnt_l[key] = 0
+        for key in cnt_l.keys():
+            if key not in cnt_char.keys():
+                cnt_char[key] = []
+            cnt_char[key].append(cnt_l[key])
+    return cnt_char
