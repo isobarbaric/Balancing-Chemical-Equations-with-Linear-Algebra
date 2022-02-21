@@ -5,6 +5,7 @@ from fraction import Fraction
 class Reaction:
 
     def __init__(self, reactants, products):
+        self.len = len(reactants.split('+') + products.split('+'))
         self.reactants = parser(reactants)
         self.products = parser(products)
 
@@ -14,55 +15,88 @@ b = "CE25PO2GhZ33O53Ca5+H23Pa42P34"
 # bug/edge case is when a new element appears in reactants that are not the first reactant in the list
 # bruh
 
-test = Reaction(a, b)
-# print(test.reactants, '\n', test.products)
+c = "CH4+O2"
 
-# for each reactant, set up an equation on a matrix
+d = "H2O+CO2"
 
-# first, let's implement Gauss, then will work in the ideas of the reactant itself
+test = Reaction(c, d)
+print(test.reactants, '\n', test.products)
 
-grid = [
-    [-3, 2, -1, -1],
-    [6, 5, 7, -7],
-    [3, -4, 2, -6]
-]
+# grid = [
+#     [-3, 2, -1, -1],
+#     [6, 5, 7, -7],
+#     [3, -4, 2, -6]
+# ]
 
-row = 3
-col = 4
+grid = []
 
-for i in range(row):
-    for j in range(col):
-        grid[i][j] = Fraction(grid[i][j]) 
+indexElements = dict()
+id = 0
+for element in test.reactants:
+    if element not in indexElements.keys():
+        indexElements[element] = id
+        id += 1
+for element in test.products:
+    if element not in indexElements.keys():
+        indexElements[element] = id
+        id += 1
 
-def gaussian_elimination(grid):
-    global row, col
-    for i in range(row-1):
-        current = grid[i][i]
-        for j in range(i+1, row):
-            ratio = -1*grid[j][i]/current
-            for k in range(col):
-                grid[j][k] += ratio*grid[i][k]
+grid = [[0]*(test.len+1)]*id
+# +1 for the answer column, rest for the variables 
 
-def extract_answers(grid):
-    answers = []
-    answers.append(grid[row-1][col-1]/grid[row-1][col-2])
-    for i in range(row-2, -1, -1): 
-        value_rn = grid[i][col-1] 
-        ptr = 0 
-        for j in range(row-i-1):
-            value_rn -= answers[ptr]*grid[i][col-2-j]
-            ptr += 1
-        answers.append(value_rn/grid[i][col-2-(row-i-1)])
-    return answers[::-1]
+print(indexElements)
 
-gaussian_elimination(grid)
+for key in indexElements.keys():
+    # print(test.reactants[key])
+    print(indexElements[key])
+    for values in test.reactants[key]:
+        print(indexElements[key], values[0]-1)
+        grid[indexElements[key]][values[0]-1] = values[1]  
+        print(grid[indexElements[key]])
+        print(grid)
+    # for values in test.reactants[key]:
+    #     grid[indexElements[key]][len(test.reactants[key]) + values[0]-1] = values[1]  
+    # print(key)
 
-for line in grid:
-    print(line)
+print(grid)
 
-answers = extract_answers(grid)
-print("Answers are:", answers)
+# print(indexElements)
 
+# row = 3
+# col = 4
+
+# for i in range(row):
+#     for j in range(col):
+#         grid[i][j] = Fraction(grid[i][j]) 
+
+# def gaussian_elimination(grid):
+#     global row, col
+#     for i in range(row-1):
+#         current = grid[i][i]
+#         for j in range(i+1, row):
+#             ratio = -1*grid[j][i]/current
+#             for k in range(col):
+#                 grid[j][k] += ratio*grid[i][k]
+
+# def extract_answers(grid):
+#     answers = []
+#     answers.append(grid[row-1][col-1]/grid[row-1][col-2])
+#     for i in range(row-2, -1, -1): 
+#         value_rn = grid[i][col-1] 
+#         ptr = 0 
+#         for j in range(row-i-1):
+#             value_rn -= answers[ptr]*grid[i][col-2-j]
+#             ptr += 1
+#         answers.append(value_rn/grid[i][col-2-(row-i-1)])
+#     return answers[::-1]
+
+# gaussian_elimination(grid)
+
+# for line in grid:
+#     print(line)
+
+# answers = extract_answers(grid)
+# print("Answers are:", answers)
 
 # setting up equations to solve 
 # each element in each reactant and product
