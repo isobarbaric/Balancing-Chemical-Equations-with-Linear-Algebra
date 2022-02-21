@@ -33,14 +33,14 @@ for i in range(row):
     for j in range(col):
         grid[i][j] = Fraction(grid[i][j]) 
 
-print(type(grid[2][2]))
+# print(type(grid[2][2]))
 
 def Print():
     global grid
     for row in grid:
         print(row)
 
-def gaussian_elimination():
+def gaussian_elimination(grid):
     global row, col
     for i in range(row-1):
         current = grid[i][i]
@@ -49,26 +49,7 @@ def gaussian_elimination():
             print(ratio)
             for k in range(col):
                 grid[j][k] += ratio*grid[i][k]
-        Print()
+        
+gaussian_elimination(grid)
 
-gaussian_elimination()
-
-### C++ driver code
-# int row = 4;
-# int col = 3;
-
-# int grid[3][4] = {
-#   {-3, 2, -1, -1},
-#   {6, -6, 7, -7},
-#   {3, -4, 4, -6} 
-# }; // +1 for one-indexing and last row for 
-#   for (int i = 0; i < row-1; i++) {
-#     fraction numberCurrFront(grid[i][i]);
-#     for (int newRow = i+1; newRow < row; newRow++) {
-#       fraction ratio = -1*grid[newRow][i]/numberCurrFront;
-#       cout << ratio << '\n';
-#       for (int j = 0; j < col; j++) {
-#         grid[newRow][j] += ratio*grid[i][j];
-#       }
-#     }
-#   }
+Print()

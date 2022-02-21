@@ -4,21 +4,23 @@ from math import gcd
 class Fraction:
 
     def __init__(self, num, den=1):
-        self.num = num
-        self.den = den
+        self.num = int(num/gcd(num, den))
+        self.den = int(den/gcd(den, num))
 
     def __add__(self, other):
         nBottom = (self.den*other.den)/gcd(self.den, other.den)
         nTop = self.num*(nBottom/self.den) + other.num*(nBottom/other.den)
-        nTop /= gcd(int(nTop), int(nBottom))
-        nBottom /= gcd(int(nTop), int(nBottom))
+        gcd_2 = gcd(int(nTop), int(nBottom))
+        nTop /= gcd_2
+        nBottom /= gcd_2
         return Fraction(int(nTop), int(nBottom))
 
     def __sub__(self, other):
         nBottom = (self.den*other.den)/gcd(self.den, other.den)
         nTop = (self.num*(nBottom/self.den) - other.num*(nBottom/other.den))
-        nTop /= gcd(int(nTop), int(nBottom))
-        nBottom /= gcd(int(nTop), int(nBottom))
+        gcd_2 = gcd(int(nTop), int(nBottom))
+        nTop /= gcd_2
+        nBottom /= gcd_2
         return Fraction(int(nTop), int(nBottom))
 
     def __mul__(self, other):
@@ -28,8 +30,9 @@ class Fraction:
         else:                
             nTop = self.num*other.num
             nBottom = self.den*other.den
-        nTop /= gcd(int(nTop), int(nBottom))
-        nBottom /= gcd(int(nTop), int(nBottom))
+        gcd_2 = gcd(int(nTop), int(nBottom))
+        nTop /= gcd_2
+        nBottom /= gcd_2
         if (nBottom < 0):
             nTop *= -1
             nBottom *= -1
@@ -41,8 +44,9 @@ class Fraction:
     def __truediv__(self, other):
         nTop = self.num*other.den
         nBottom = self.den*other.num
-        nTop /= gcd(int(nTop), int(nBottom))
-        nBottom /= gcd(int(nTop), int(nBottom))
+        gcd_2 = gcd(int(nTop), int(nBottom))
+        nTop /= gcd_2
+        nBottom /= gcd_2
         return Fraction(int(nTop), int(nBottom))
 
     def __repr__(self):
@@ -53,11 +57,17 @@ class Fraction:
     def __iadd__(self, other):
         return self.__add__(other)
 
-p1 = Fraction(3, 5)
-p2 = Fraction(2, 7) 
-print(p1+p2) 
-print(p1/p2)
-print(3*p1, p1*3)
-print(p1/p2, p1/p2*-1)
-p1 += p2
-print(p1)
+# p1 = Fraction(3, 5)
+# p2 = Fraction(2, 7) 
+# print(p1+p2) 
+# print(p1/p2)
+# print(3*p1, p1*3)
+# print(p1/p2, p1/p2*-1)
+# p1 += p2
+# print(p1)
+# p3 = Fraction(1, 5)
+# p4 = Fraction(10, 25)
+# print(p4)
+# print()
+# print(p3/p4) # 1/5 divided by 2/5
+# # print(-1*p3/p4)
