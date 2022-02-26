@@ -5,31 +5,29 @@ from answer import Answer
 root = Tk() 
 root.title('Balancing Chemical Equations')
 
+response1 = Label(root, text='Enter the reactants here (separated by plus signs, spaces between reactants are allowed)')
+response1.pack()
+
 input_field_reactants = Entry(root)
 input_field_reactants.pack() 
 
+response2 = Label(root, text='Enter the products here (separated by plus signs, spaces between products are allowed)')
+response2.pack()
+
 input_field_products = Entry(root)
 input_field_products.pack() 
-
-response = Label(root, text='Waiting for input...press submit once ready')
-response.pack()
 
 a = ''
 b = ''
 
 def when_clicked():
     global a, b
-    try:
-        a = input_field_reactants.get().replace(' ', '')
-        b = input_field_products.get().replace(' ', '')
-        response.config(text = "Input processed successfully...please standby")
-        root.destroy()
-    except ValueError:
-        num_attempts += 1
-        response.config(text = f"Invalid input, please correct input format and press submit again. Number of invalid attempts: {num_attempts}")  
+    a = input_field_reactants.get().replace(' ', '')
+    b = input_field_products.get().replace(' ', '')
+    root.destroy()
 
-submit_button = Button(root, text="Submit coefficients", command=when_clicked)
-submit_button.pack()
+submit_button = Button(root, text="Submit reactants and products", command=when_clicked)
+submit_button.pack(side = TOP)
 
 root.mainloop()
 
