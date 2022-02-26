@@ -45,7 +45,6 @@ def parser(reaction):
         iterNum += 1
     for key in cnt_char.keys():
         for i in range(1, len(species)+1):
-            # find 'i' as first element in the nested list
             found = False
             for j in range(len(cnt_char[key])):
                 if (cnt_char[key][j][0] == i):
