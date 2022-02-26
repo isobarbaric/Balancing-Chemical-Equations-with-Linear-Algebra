@@ -12,7 +12,6 @@ class Answer:
         self.tabulate()
         if len(self.answerValues) == 0:
             return
-        print(self.answerValues)
         ptr = 0
         for species in self.answerValues[0].split('+'):
             if self.answerValues[2][ptr].evl() == 1:
