@@ -1,13 +1,20 @@
 
 from fraction import Fraction
-from math import gcd
+import math
 import numpy as np
 
-# this Reaction class stores all of the relevant functionality needed to balance a chemical reaction  
 class Reaction:
+    '''
+        Stores all relevant functionality needed to balance a chemical reaction  
+    '''
 
     # initializing a Reaction object
     def __init__(self, reactants, products):
+        ''' 
+            :param reactants: string representing the reactant side of the chemical equation
+            :param products: string representing the product side of the chemical equation
+            Returns a Reaction object
+        '''
         # self.reactants and self.products maintain a copy of the reactants and products string 
         self.reactants = reactants 
         self.products = products 
@@ -40,6 +47,9 @@ class Reaction:
     
     # gaussian elimination operates on the matrix (self.grid) created by build() in order to reduce it to row-echelon form
     def gaussian_elimination(self):
+        ''' 
+            Reduces self.grid to row-echelon form
+        '''
         # row, col store the dimensions of the grid over which to iterate
         row = len(self.grid)
         col = len(self.grid[0])
@@ -54,6 +64,9 @@ class Reaction:
 
     # if the last row in the matrix is entirely just composed of 0s, this means that the reaction is already balanced - this function checks for this 
     def isBalanced(self):
+        '''
+            Returns whether chemical equation is balanced or not based on self.grid
+        '''
         # if at any point in the last row, a non-zero number occurs, the function returns False based on the heuristic mentioned 
         for i in range(len(self.grid[0])-1):
             if self.grid[len(self.grid)-1][i].eval() != 0:
@@ -64,6 +77,9 @@ class Reaction:
 
     # the extract_answers() method takes the reduced matrix and extracts the individual coefficient for each reactant or product
     def extract_answers(self): 
+        '''
+            Returns a list of coefficients for the reactants and products in a given chemical equation 
+        '''
         # for the edge case for when the reaction is already balanced, the self.isBalanced() method determines this 
         if self.isBalanced():
             # if the reaction is balanced, then the reaction is left unchanged and coefficients of 1 are passed to a list and returned
@@ -90,7 +106,7 @@ class Reaction:
         # to get integral coefficients, the lcm of the denominators is found and will ultimately be multipled by each currently fractional coefficient
         commonDen = 1
         for i in range(len(answers)):
-            commonDen = int((answers[i].den*commonDen)/gcd(commonDen, answers[i].den))
+            commonDen = int((answers[i].den*commonDen)/math.gcd(commonDen, answers[i].den))
 
         # now that the common denominator as been found, all of the elements are multiplied by this common denominator using list comprehension to obtain integral coefficients
         answers = [commonDen*i for i in answers]
@@ -100,6 +116,9 @@ class Reaction:
 
     # this function creates a matrix using information stored in chemical reactions 
     def build(self):
+        '''
+            Builds a matrix in self.grid according to the reactants and products
+        '''
         # this dictionary maintains the unique ID assigned to each distinct
         indexElements = dict()
         
@@ -151,8 +170,12 @@ class Reaction:
         self.gaussian_elimination()
 
     # the parser function goes through the reactants and products and identifies the counts for each particular element
-    def parser(self, reaction_rn):
-        species = reaction_rn.split('+')
+    def parser(self, oneSideChemicalEquation):
+        '''
+            :param oneSideChemicalEquation: string representing one side of a chemical equation, either reactants or products
+            Returns a dictionary representing the count of each element in the individual chemical entities in oneSideChemicalEquation
+        '''
+        species = oneSideChemicalEquation.split('+')
         cnt_char = dict()
         iterNum = 1
         for entity in species:

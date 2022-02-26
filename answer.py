@@ -36,7 +36,7 @@ class Answer:
             ptr += 1
             self.answerString += '+'
         self.answerString = self.answerString[:-1]
-        self.answerString += ' => '
+        self.answerString += ' -> '
         for species in self.answerValues[1].split('+'):
             if self.answerValues[2][ptr].eval() == 1:
                 self.answerString += species
