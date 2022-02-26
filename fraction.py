@@ -100,18 +100,3 @@ class Fraction:
     # returns a decimal value for the exact value of the fraction
     def eval(self):
         return self.num/self.den
-
-p1 = Fraction(3, 5)
-# p2 = Fraction(2, 7) 
-# print(p1+p2) 
-# print(p1/p2)
-# print(3*p1, p1*3)
-# print(p1/p2, p1/p2*-1)
-# p1 += p2
-# print(p1)
-# p3 = Fraction(1, 5)
-# p4 = Fraction(10, 25)
-# print(p4)
-# print()
-# print(p3/p4) # 1/5 divided by 2/5
-# # print(-1*p3/p4)
