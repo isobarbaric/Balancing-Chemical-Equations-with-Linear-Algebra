@@ -3,23 +3,45 @@ from parser import parser
 from fraction import Fraction
 from math import gcd
 import numpy as np
+import itertools
 import sys
+
+class Answer:
+    def __init__(self, reactants, products):
+        self.possible_answers = []
+        self.answer = []
+        self.tabulate()
+
+    def tabulate(self):
+        for combination in list(itertools.permutations(products.split('+'))):
+            rn = ""
+            for item in combination:
+                rn += item + '+'
+            rn = rn[:-1]
+            self.possible_answers.append(Reaction(c, rn))
+        for potential_reaction in self.possible_answers:
+            if potential_reaction.possible:
+                self.answer.append([potential_reaction.reactantString + "->" + potential_reaction.productString, potential_reaction.answers])
+                break
 
 class Reaction:
 
     def __init__(self, reactants, products):
-        self.len = len(reactants.split('+')) + len(products.split('+'))
-        self.reactants = parser(reactants)
-        self.products = parser(products)
+        self.len = len(reactants.split('+')) + len(products.
+        split('+'))
         self.reactantString = reactants 
         self.productString = products 
+        self.reactants = parser(reactants)
+        self.products = parser(products)
+        self.possible = True
         self.grid = []
+        self.answers = []
         self.build()
+        if not self.possible:
+            return 
         self.answers = self.extract_answers()
-        print(self.answers)
-
+        
     def gaussian_elimination(self):
-        # global row, col
         row = len(self.grid)
         col = len(self.grid[0])
         for i in range(row-1):
@@ -27,7 +49,6 @@ class Reaction:
             for j in range(i+1, row):
                 ratio = -1*self.grid[j][i]/current
                 for k in range(col):
-                    assert type(self.grid[j][k]) is Fraction
                     self.grid[j][k] += ratio*self.grid[i][k]
 
     def isBalanced(self):
@@ -51,7 +72,8 @@ class Reaction:
                 curr += answers[ptr]*self.grid[i][j]
                 ptr += 1
             curr *= -1
-            curr = curr/self.grid[i][i] # overload this operator 
+            curr = curr/self.grid[i][i] 
+            # overload this operator 
             answers.append(curr)
         commonDen = 1
         for i in range(len(answers)):
@@ -60,7 +82,6 @@ class Reaction:
         return answers[::-1]
 
     def build(self):
-        # print(self.reactants, '\n', self.products)
         indexElements = dict()
         id = 0
         for element in self.reactants:
@@ -83,8 +104,6 @@ class Reaction:
             for values in self.products[key]:
                 t[indexElements[key]][len(self.reactants[key]) + values[0]-1] = Fraction(-1*values[1])
         self.grid = np.array(t)
-        print(self.grid)
-        # grid = [[0 for i in range(test.len+1)] for j in range(id)]
         for i in range(len(self.grid)):
             if self.grid[i][i].evl() == 0:
                 for j in range(i+1, len(self.grid)):
@@ -92,22 +111,15 @@ class Reaction:
                         self.grid[[i, j]] = self.grid[[j, i]]
                         break
             if self.grid[i][i].evl() == 0:
-                print(self.grid)
-                sys.exit('Error: division by zero/diagonal contains zero. The solution does not exist.')
+                self.possible = False
+                return 
         self.gaussian_elimination()
 
-# a = "Ca2PhO2G4K3O5+H2Ca5O"
-# b = "CE25PO2GhZ33O53Ca5+H23Pa42P34"
-c = "C3H8+O2".replace(' ', '')
-# these two produce different results :sus:
-d = "H2O+CO2".replace(' ', '')
-# d = "CO2+H2O"
+a = "CH4 + O2".replace(' ', '')
+b = "CO2 + H2O".replace(' ', '')
 
-combustion = Reaction(c, d)
-
-
-# answers = extract_answers(grid)
-# print("Answers are:", answers)
+rn = Answer(a, b)
+print(rn.answer)
 
 # setting up equations to solve 
 # each element in each reactant and product
