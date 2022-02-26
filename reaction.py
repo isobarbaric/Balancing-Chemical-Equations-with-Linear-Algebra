@@ -3,49 +3,6 @@ from parser import parser
 from fraction import Fraction
 from math import gcd
 import numpy as np
-import itertools
-import sys
-
-class Answer:
-    def __init__(self, reactants, products):
-        self.reactants = reactants.replace(' ', '')
-        self.products = products.replace(' ', '')
-        self.possible_answers = []
-        self.answerValues = []
-        self.answerString = ""
-        self.tabulate()
-        if len(self.answerValues) == 0:
-            return
-        ptr = 0
-        for species in self.reactants.split('+'):
-            if self.answerValues[ptr].evl() == 1:
-                self.answerString += species
-            else:
-                self.answerString += str(self.answerValues[ptr]) + species
-            ptr += 1
-            self.answerString += '+'
-        self.answerString = self.answerString[:-1]
-        self.answerString += ' => '
-        for species in self.products.split('+'):
-            if self.answerValues[ptr].evl() == 1:
-                self.answerString += species
-            else:
-                self.answerString += str(self.answerValues[ptr]) + species
-            ptr += 1
-            self.answerString += '+'
-        self.answerString = self.answerString[:-1]
-
-    def tabulate(self):
-        for combination in list(itertools.permutations(self.products.split('+'))):
-            rn = ""
-            for item in combination:
-                rn += item + '+'
-            rn = rn[:-1]
-            self.possible_answers.append(Reaction(self.reactants, rn))
-        for potential_reaction in self.possible_answers:
-            if potential_reaction.possible:
-                self.answerValues = potential_reaction.answers
-                break
 
 class Reaction:
 
@@ -137,19 +94,3 @@ class Reaction:
                 self.possible = False
                 return 
         self.gaussian_elimination()
-
-# a = "C5H12 + O2"
-# b = "CO2 + H2O"
-
-# rn = Answer(a, b)
-# print(rn.answerString)
-
-# setting up equations to solve 
-# each element in each reactant and product
-# -> reactant_1a + reactant_2b + reactant_3c + reactant_4d + .... 
-#           = count of 
-
-# here, a,b,c,d... = coefficients in front of the ath, bth, cth, dth... reactant and product (count in each reactant and product)
-# dimensions of grid = 
-#       height -> # of distinct elements involved in the reaction 
-#       width -> # of reactants + # of products

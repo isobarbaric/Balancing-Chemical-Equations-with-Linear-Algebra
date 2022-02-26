@@ -1,6 +1,6 @@
 
 from tkinter import *
-from reaction import *
+from answer import Answer
 
 root = Tk() 
 root.title('Balancing Chemical Equations')
@@ -36,7 +36,7 @@ root.mainloop()
 current_reaction = Answer(a, b)
 
 root = Tk()
-root.title('Cardano\'s Method')
+root.title('Balancing Chemical Equations')
 
 display_balanced_eqn = Label(root, text=f"The balanced chemical equation is {current_reaction.answerString}")
 display_balanced_eqn.pack()
