@@ -1,10 +1,9 @@
 
 from parser import parser
 from fraction import Fraction
-from array import *
-import sys
-
+from math import gcd
 import numpy as np
+import sys
 
 class Reaction:
 
@@ -12,127 +11,100 @@ class Reaction:
         self.len = len(reactants.split('+')) + len(products.split('+'))
         self.reactants = parser(reactants)
         self.products = parser(products)
-        self.reactionString = reactants + "->" + products
+        self.reactantString = reactants 
+        self.productString = products 
+        self.grid = []
+        self.build()
+        self.answers = self.extract_answers()
+        print(self.answers)
 
-a = "Ca2PhO2G4K3O5+H2Ca5O"
+    def gaussian_elimination(self):
+        # global row, col
+        row = len(self.grid)
+        col = len(self.grid[0])
+        for i in range(row-1):
+            current = self.grid[i][i]
+            for j in range(i+1, row):
+                ratio = -1*self.grid[j][i]/current
+                for k in range(col):
+                    assert type(self.grid[j][k]) is Fraction
+                    self.grid[j][k] += ratio*self.grid[i][k]
 
-b = "CE25PO2GhZ33O53Ca5+H23Pa42P34"
-# c = "NH3+HCl"
-# d = "CO2+H2O"
-# d = "NH4Cl"
+    def isBalanced(self):
+        for i in range(len(self.grid[0])-1):
+            if self.grid[len(self.grid)-1][i].evl() != 0:
+                return False
+        return True
 
+    def extract_answers(self): 
+        # assumption is bottom row has 2 non-zero values
+        if self.isBalanced():
+            rn = [1 for i in range(self.len)]
+            return rn
+        row = len(self.grid)
+        col = len(self.grid[0])
+        answers = [Fraction(1)]
+        for i in range(row-1, -1, -1): 
+            curr = Fraction(0)
+            ptr = 0
+            for j in range(col-2, i, -1):
+                curr += answers[ptr]*self.grid[i][j]
+                ptr += 1
+            curr *= -1
+            curr = curr/self.grid[i][i] # overload this operator 
+            answers.append(curr)
+        commonDen = 1
+        for i in range(len(answers)):
+            commonDen = int((answers[i].den*commonDen)/gcd(commonDen, answers[i].den))
+        answers = [commonDen*i for i in answers]
+        return answers[::-1]
+
+    def build(self):
+        # print(self.reactants, '\n', self.products)
+        indexElements = dict()
+        id = 0
+        for element in self.reactants:
+            if element not in indexElements.keys():
+                indexElements[element] = id
+                id += 1
+        for element in self.products:
+            if element not in indexElements.keys():
+                indexElements[element] = id
+                id += 1
+        t = []
+        for i in range(id):
+            rn = []
+            for j in range(self.len+1):
+                rn.append(Fraction(0))
+            t.append(rn)
+        for key in indexElements.keys():
+            for values in self.reactants[key]:
+                t[indexElements[key]][values[0]-1] = Fraction(values[1])
+            for values in self.products[key]:
+                t[indexElements[key]][len(self.reactants[key]) + values[0]-1] = Fraction(-1*values[1])
+        self.grid = np.array(t)
+        print(self.grid)
+        # grid = [[0 for i in range(test.len+1)] for j in range(id)]
+        for i in range(len(self.grid)):
+            if self.grid[i][i].evl() == 0:
+                for j in range(i+1, len(self.grid)):
+                    if self.grid[j][i] != 0:
+                        self.grid[[i, j]] = self.grid[[j, i]]
+                        break
+            if self.grid[i][i].evl() == 0:
+                print(self.grid)
+                sys.exit('Error: division by zero/diagonal contains zero. The solution does not exist.')
+        self.gaussian_elimination()
+
+# a = "Ca2PhO2G4K3O5+H2Ca5O"
+# b = "CE25PO2GhZ33O53Ca5+H23Pa42P34"
 c = "C3H8+O2".replace(' ', '')
-d = "H2O+CO2".replace(' ', '')
-
-print(c, d)
-
 # these two produce different results :sus:
+d = "H2O+CO2".replace(' ', '')
+# d = "CO2+H2O"
 
-test = Reaction(c, d)
-print(test.reactants, '\n', test.products)
+combustion = Reaction(c, d)
 
-indexElements = dict()
-id = 0
-for element in test.reactants:
-    if element not in indexElements.keys():
-        indexElements[element] = id
-        id += 1
-for element in test.products:
-    if element not in indexElements.keys():
-        indexElements[element] = id
-        id += 1
-
-t = []
-
-for i in range(id):
-    rn = []
-    for j in range(test.len+1):
-        rn.append(Fraction(0))
-    t.append(rn)
-
-for key in indexElements.keys():
-    for values in test.reactants[key]:
-        t[indexElements[key]][values[0]-1] = Fraction(values[1])
-    for values in test.products[key]:
-        t[indexElements[key]][len(test.reactants[key]) + values[0]-1] = Fraction(-1*values[1])
-
-grid = np.array(t)
-
-print(grid)
-
-# grid = [[0 for i in range(test.len+1)] for j in range(id)]
-
-for i in range(len(grid)):
-    if grid[i][i].evl() == 0:
-        for j in range(i+1, len(grid)):
-            if grid[j][i] != 0:
-                grid[[i, j]] = grid[[j, i]]
-                break
-    if grid[i][i].evl() == 0:
-        print(grid)
-        sys.exit('Error: division by zero/diagonal contains zero. The solution does not exist.')
-
-# grid = [[0 for i in range(test.len+1)] for j in range(id)]
-# +1 for the answer column, rest for the variables 
-
-row = len(grid)
-col = len(grid[0])
-
-def gaussian_elimination(grid):
-    global row, col
-    for i in range(row-1):
-        current = grid[i][i]
-        for j in range(i+1, row):
-            ratio = -1*grid[j][i]/current
-            for k in range(col):
-                assert type(grid[j][k]) is Fraction
-                grid[j][k] += ratio*grid[i][k]
-
-# def extract_answers(grid):
-#     global row, col
-#     answers = [1]
-#     answers.append(grid[row-1][col-1]/grid[row-1][col-2])
-#     for i in range(row-2, -1, -1): 
-#         value_rn = grid[i][col-1] 
-#         ptr = 0 
-#         for j in range(row-i-1):
-#             value_rn -= answers[ptr]*grid[i][col-2-j]
-#             ptr += 1
-#         answers.append(value_rn/grid[i][col-2-(row-i-1)])
-#     return answers[::-1]
-
-def extract_answersRev(grid): # assumption is bottom row has 2 non-zero values
-    answers = [1]
-    # answers.append(-1*(grid[len(grid)-1][len(grid[0])-2]/grid[len(grid)-1][len(grid[0])-3]))
-    # 
-    for i in range(row-1, -1, -1): 
-        curr = Fraction(0)
-        ptr = 0
-        for j in range(col-2, -1, -1):
-            
-            print(grid[i][j])
-            curr += answers[ptr]*grid[i][j]
-            ptr += 1
-    print(answers)
-    return answers[::-1]
-
-gaussian_elimination(grid)
-
-def isBalanced(grid):
-    for i in range(len(grid[0])-1):
-        if grid[len(grid)-1][i].evl() != 0:
-            return False
-    return True
-
-for line in grid:
-    print(line)
-
-if isBalanced(grid):
-    print(test.reactionString)
-else:
-    extract_answersRev(grid)
-
-# print(isBalanced(grid))
 
 # answers = extract_answers(grid)
 # print("Answers are:", answers)
