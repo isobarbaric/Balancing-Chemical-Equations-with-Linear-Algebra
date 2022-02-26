@@ -14,7 +14,11 @@ input_field_products.pack()
 response = Label(root, text='Waiting for input...press submit once ready')
 response.pack()
 
+a = ''
+b = ''
+
 def when_clicked():
+    global a, b
     try:
         a = input_field_reactants.get().replace(' ', '')
         b = input_field_products.get().replace(' ', '')

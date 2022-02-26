@@ -138,11 +138,11 @@ class Reaction:
                 return 
         self.gaussian_elimination()
 
-a = "C5H12 + O2"
-b = "CO2 + H2O"
+# a = "C5H12 + O2"
+# b = "CO2 + H2O"
 
-rn = Answer(a, b)
-print(rn.answerString)
+# rn = Answer(a, b)
+# print(rn.answerString)
 
 # setting up equations to solve 
 # each element in each reactant and product
