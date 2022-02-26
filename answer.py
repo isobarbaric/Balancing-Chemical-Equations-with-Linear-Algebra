@@ -12,21 +12,22 @@ class Answer:
         self.tabulate()
         if len(self.answerValues) == 0:
             return
+        print(self.answerValues)
         ptr = 0
-        for species in self.reactants.split('+'):
-            if self.answerValues[ptr].evl() == 1:
+        for species in self.answerValues[0].split('+'):
+            if self.answerValues[2][ptr].evl() == 1:
                 self.answerString += species
             else:
-                self.answerString += str(self.answerValues[ptr]) + species
+                self.answerString += str(self.answerValues[2][ptr]) + species
             ptr += 1
             self.answerString += '+'
         self.answerString = self.answerString[:-1]
         self.answerString += ' => '
-        for species in self.products.split('+'):
-            if self.answerValues[ptr].evl() == 1:
+        for species in self.answerValues[1].split('+'):
+            if self.answerValues[2][ptr].evl() == 1:
                 self.answerString += species
             else:
-                self.answerString += str(self.answerValues[ptr]) + species
+                self.answerString += str(self.answerValues[2][ptr]) + species
             ptr += 1
             self.answerString += '+'
         self.answerString = self.answerString[:-1]
@@ -40,5 +41,5 @@ class Answer:
             self.possible_answers.append(Reaction(self.reactants, rn))
         for potential_reaction in self.possible_answers:
             if potential_reaction.possible:
-                self.answerValues = potential_reaction.answers
+                self.answerValues = [potential_reaction.reactantString, potential_reaction.productString, potential_reaction.answers]
                 break
