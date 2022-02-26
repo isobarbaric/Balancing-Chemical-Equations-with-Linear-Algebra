@@ -8,20 +8,43 @@ import sys
 
 class Answer:
     def __init__(self, reactants, products):
+        self.reactants = reactants.replace(' ', '')
+        self.products = products.replace(' ', '')
         self.possible_answers = []
-        self.answer = []
+        self.answerValues = []
+        self.answerString = ""
         self.tabulate()
+        if len(self.answerValues) == 0:
+            return
+        ptr = 0
+        for species in self.reactants.split('+'):
+            if self.answerValues[ptr].evl() == 1:
+                self.answerString += species
+            else:
+                self.answerString += str(self.answerValues[ptr]) + species
+            ptr += 1
+            self.answerString += '+'
+        self.answerString = self.answerString[:-1]
+        self.answerString += ' => '
+        for species in self.products.split('+'):
+            if self.answerValues[ptr].evl() == 1:
+                self.answerString += species
+            else:
+                self.answerString += str(self.answerValues[ptr]) + species
+            ptr += 1
+            self.answerString += '+'
+        self.answerString = self.answerString[:-1]
 
     def tabulate(self):
-        for combination in list(itertools.permutations(products.split('+'))):
+        for combination in list(itertools.permutations(self.products.split('+'))):
             rn = ""
             for item in combination:
                 rn += item + '+'
             rn = rn[:-1]
-            self.possible_answers.append(Reaction(c, rn))
+            self.possible_answers.append(Reaction(self.reactants, rn))
         for potential_reaction in self.possible_answers:
             if potential_reaction.possible:
-                self.answer.append([potential_reaction.reactantString + "->" + potential_reaction.productString, potential_reaction.answers])
+                self.answerValues = potential_reaction.answers
                 break
 
 class Reaction:
@@ -115,11 +138,11 @@ class Reaction:
                 return 
         self.gaussian_elimination()
 
-a = "CH4 + O2".replace(' ', '')
-b = "CO2 + H2O".replace(' ', '')
+a = "C5H12 + O2"
+b = "CO2 + H2O"
 
 rn = Answer(a, b)
-print(rn.answer)
+print(rn.answerString)
 
 # setting up equations to solve 
 # each element in each reactant and product
