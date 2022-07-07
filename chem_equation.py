@@ -23,7 +23,7 @@ class ChemicalEquation:
         # this boolean variable keeps track of whether an answer was found for the balancing of this equation or not
         self.possible = True
         
-        # this variable maintains a grid that contains a matrix to solve for the 
+        # this variable maintains a grid that contains a matrix to solve for the coefficients of the balanced equation
         self.grid = []
 
         # in the case that this equation is balance-able, this variable keeps track of the coefficients found for each reactant and product
@@ -54,7 +54,7 @@ class ChemicalEquation:
                     self.grid[j][k] += ratio*self.grid[i][k]
 
     # if the last row in the matrix is entirely just composed of 0s, this means that the equation is already balanced - this function checks for this 
-    def isBalanced(self):
+    def is_balanced(self):
 
         # if at any point in the last row, a non-zero number occurs, the function returns False based on the heuristic mentioned 
         for i in range(len(self.grid[0])-1):
@@ -66,8 +66,8 @@ class ChemicalEquation:
 
     # the extract_answers() method takes the reduced matrix and extracts the individual coefficient for each reactant or product
     def extract_answers(self): 
-        # for the edge case for when the equation is already balanced, the self.isBalanced() method determines this 
-        if self.isBalanced():
+        # for the edge case for when the equation is already balanced, the self.is_balanced() method determines this 
+        if self.is_balanced():
             # if the equation is balanced, then the equation is left unchanged and coefficients of 1 are passed to a list and returned
             rn = [1 for i in range(self.len)]
             return rn
@@ -86,16 +86,16 @@ class ChemicalEquation:
             for j in range(col-2, i, -1):
                 curr += answers[ptr]*self.grid[i][j]
                 ptr += 1
-            curr /= -1*self.grid[i][i] # overload this operator 
+            curr /= -1*self.grid[i][i] 
             answers.append(curr)
 
         # to get integral coefficients, the lcm of the denominators is found and will ultimately be multipled by each currently fractional coefficient
-        commonDen = 1
+        common_den = 1
         for i in range(len(answers)):
-            commonDen = int((answers[i].den*commonDen)/math.gcd(commonDen, answers[i].den))
+            common_den = int((answers[i].den*common_den)/math.gcd(common_den, answers[i].den))
 
         # now that the common denominator as been found, all of the elements are multiplied by this common denominator using list comprehension to obtain integral coefficients
-        answers = [commonDen*i for i in answers]
+        answers = [common_den*i for i in answers]
         
         # the coefficients generated are generated from back to front and hence they are returned in a reversed order
         return answers[::-1]
@@ -103,15 +103,15 @@ class ChemicalEquation:
     # this function creates a matrix using information stored in the chemical equation 
     def build(self):
         # this dictionary maintains the unique ID assigned to each distinct
-        indexElements = dict()
+        index_elements = dict()
         
         # this variable keeps track of the unique ID assigned to each distinct element and will be used to numerically assign IDs
         id = 0
         
         # unique IDs are assigned to each element and these values are recorded in the indexElements dictionary
         for element in self.parsed_reactants:
-            if element not in indexElements.keys():
-                indexElements[element] = id
+            if element not in index_elements.keys():
+                index_elements[element] = id
                 id += 1
 
         # note that the same procedure as above is not performed for the products as it is known that for a valid chemical equation, the elements on either side are the same - this is not a nuclear reaction
@@ -126,11 +126,11 @@ class ChemicalEquation:
             t.append(rn)
         
         # using the information contained in the grid and putting these values into the grid at their specied location using the IDs initialized and 
-        for key in indexElements.keys():
+        for key in index_elements.keys():
             for values in self.parsed_reactants[key]:
-                t[indexElements[key]][values[0]-1] = Fraction(values[1])
+                t[index_elements[key]][values[0]-1] = Fraction(values[1])
             for values in self.parsed_products[key]:
-                t[indexElements[key]][len(self.parsed_reactants[key]) + values[0]-1] = Fraction(-1*values[1])
+                t[index_elements[key]][len(self.parsed_reactants[key]) + values[0]-1] = Fraction(-1*values[1])
         self.grid = np.array(t)
         
         # this for loop checks to see to ensure that the diagonal going from the top-left to the bottom-right does not contain any zeroes - if it does, it will attempt to swap this row with future rows
@@ -153,7 +153,7 @@ class ChemicalEquation:
         self.gaussian_elimination()
 
     # the parser function goes through the reactants and products and identifies the counts for each particular element
-    def parser(self, oneSideChemicalEquation):
+    def parser(self, one_side_chemical_equation):
         species = oneSideChemicalEquation.split('+')
         cnt_char = dict()
         iterNum = 1
@@ -222,19 +222,20 @@ class BalancedChemicalEquation:
         self.possible_answers = []
 
         # creating variables to store the coefficients associated with the balancing process
-        self.answerValues = []
-        self.answerString = ""
+        self.answer_values = []
+        self.answer_string = ""
         
         # calling the tabulate method to determine an answer to the balancing of the given chemical equation (reactants and products)
         self.tabulate()
 
         # if there are no solutions to the given chemical equation, then 
-        if len(self.answerValues) == 0:
+        if len(self.answer_values) == 0:
             return
 
         # calling the determine method to get the individual coefficients in the balanced chemical equation
         self.determine()
 
+    # determining the configuration of the balanced reaction
     def tabulate(self):
         # looping through permutations of the 
         for combination in list(itertools.permutations(self.products.split('+'))):
@@ -253,25 +254,37 @@ class BalancedChemicalEquation:
         # looping through the possible reactions in the possible_answers attribute to see whether the 
         for potential_reaction in self.possible_answers:
             if potential_reaction.possible:
-                self.answerValues = [potential_reaction.reactants, potential_reaction.products, potential_reaction.answers]
+                self.answer_values = [potential_reaction.reactants, potential_reaction.products, potential_reaction.answers]
                 break
 
+    # determining the coefficients of each of the reactants and products in the balanced chemical equation
     def determine(self):
         ptr = 0
-        for species in self.answerValues[0].split('+'):
-            if self.answerValues[2][ptr].eval() == 1:
-                self.answerString += species
+        
+        # looping through the reactants and adding them to answer_string
+        for species in self.answer_values[0].split('+'):
+            if self.answer_values[2][ptr].eval() == 1:
+                self.answer_string += species
             else:
-                self.answerString += str(self.answerValues[2][ptr]) + species
+                self.answer_string += str(self.answer_values[2][ptr]) + species
             ptr += 1
-            self.answerString += ' + '
-        self.answerString = self.answerString[:-1]
-        self.answerString += ' -> '
-        for species in self.answerValues[1].split('+'):
-            if self.answerValues[2][ptr].eval() == 1:
-                self.answerString += species
+            self.answer_string += ' + '
+
+        # removing the extraneous plus sign in the string so far
+        self.answer_string = self.answer_string[:-2]
+        
+        # adding an arrow between the reactants and products
+        self.answer_string += ' -> '
+
+        # looping through the products and adding them to answer_string
+        for species in self.answer_values[1].split('+'):
+            if self.answer_values[2][ptr].eval() == 1:
+                self.answer_string += species
             else:
-                self.answerString += str(self.answerValues[2][ptr]) + species
+                self.answer_string += str(self.answer_values[2][ptr]) + species
             ptr += 1
-            self.answerString += ' + '
-        self.answerString = self.answerString[:-1]
+            self.answer_string += ' + '
+        
+        # removing the extraneous plus sign in the string at the end
+        self.answer_string = self.answer_string[:-2]
+    

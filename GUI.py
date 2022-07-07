@@ -1,5 +1,5 @@
 
-from tkinter import Tk, Label, Entry, Button, TOP
+from tkinter import Tk, Label, Entry, Button, TOP, CENTER
 from chem_equation import BalancedChemicalEquation
 
 class GUI:
@@ -10,10 +10,10 @@ class GUI:
 
     # a public method through a call of whom the functionality of the GUI will work 
     def load(self):
-        self.__loadInputMenu()
+        self.__load_input_menu()
 
     # loading the GUI to interact with the user 
-    def __loadInputMenu(self):
+    def __load_input_menu(self):
         # creating a GUI object using tkinter
         root = Tk() 
 
@@ -37,16 +37,16 @@ class GUI:
         reactant_prompt.pack()
 
         # adding a text box to the window to collect user input
-        inputField_reactants = Entry(root)
-        inputField_reactants.pack() 
+        input_field_reactants = Entry(root, justify = CENTER)
+        input_field_reactants.pack() 
 
         # adding a label to the window with instructions for what to enter
         product_prompt = Label(root, text='Enter the products here:')
         product_prompt.pack()
 
         # adding a text box to the window to collect user input
-        inputField_products = Entry(root)
-        inputField_products.pack() 
+        input_field_products = Entry(root, justify = CENTER)
+        input_field_products.pack() 
 
         # declared two variable to store the chemical equations entered by the user
         a = ''
@@ -57,8 +57,8 @@ class GUI:
             nonlocal a, b
 
             # storing the contents of the textboxes involved in user input
-            a = inputField_reactants.get().replace(' ', '')
-            b = inputField_products.get().replace(' ', '')
+            a = input_field_reactants.get().replace(' ', '')
+            b = input_field_products.get().replace(' ', '')
 
             # initializing a Answer object using the two strings taken as input
             self.current_reaction = BalancedChemicalEquation(a, b)
@@ -69,7 +69,7 @@ class GUI:
             self.__loadResultsMenu()
 
         # adding a submit button to the window to allow the user to 'submit' their input
-        submit_button = Button(root, text="Submit reactants and products", command=when_clicked)
+        submit_button = Button(root, text="Submit reactants and products", command = when_clicked)
         submit_button.pack(side = TOP)
 
         # adding a label to the window with instructions for what to enter
@@ -100,8 +100,9 @@ class GUI:
         root.geometry("{}x{}+{}+{}".format(w_width, w_height, x_coordinate, y_coordinate))
 
         # adding a label to the window with the balanced chemical equation determined
-        display_balanced_eqn = Label(root, text=f"\nThe balanced chemical equation is:\n\n{self.current_reaction.answerString}")
+        display_balanced_eqn = Label(root, text=f"\nThe balanced chemical equation is:\n\n{self.current_reaction.answer_string}")
         display_balanced_eqn.pack()
 
         # running the main loop for the GUI object
         root.mainloop()
+

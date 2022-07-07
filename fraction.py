@@ -103,3 +103,4 @@ class Fraction:
     # returns a decimal value for the exact value of the fraction
     def eval(self):        
         return self.num/self.den
+
