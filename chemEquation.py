@@ -1,20 +1,24 @@
 
 from fraction import Fraction
+
 import math
 import numpy as np
+import itertools
 
-class Reaction:
+class ChemicalEquation:
     '''
         Stores all relevant functionality needed to balance a chemical reaction  
     '''
 
-    # initializing a Reaction object
+    # constructor
     def __init__(self, reactants, products):
         ''' 
             :param reactants: string representing the reactant side of the chemical equation
             :param products: string representing the product side of the chemical equation
-            Returns a Reaction object
+
+            Returns a ChemicalEquation object
         '''
+
         # self.reactants and self.products maintain a copy of the reactants and products string 
         self.reactants = reactants 
         self.products = products 
@@ -22,27 +26,27 @@ class Reaction:
         # self.len keeps track of the total number of reactants and products
         self.len = len(self.reactants.split('+')) + len(self.products.split('+'))
         
-        # these two member maintain a dictionary containing the count of each element per reactant and product using the parser() function 
+        # these two variables maintain a dictionary containing the count of each element per reactant and product using the parser() function 
         self.parsed_reactants = self.parser(self.reactants)
         self.parsed_products = self.parser(self.products)
         
-        # this boolean variable keeps track of whether an answer was found for t 
+        # this boolean variable keeps track of whether an answer was found for the balancing of this equation or not
         self.possible = True
         
-        # this variable maintains a grid that contains 
+        # this variable maintains a grid that contains a matrix to solve for the 
         self.grid = []
 
-        # in the case that this reaction is balance-able, this variable keeps track of the coefficients found for each reactant and product
+        # in the case that this equation is balance-able, this variable keeps track of the coefficients found for each reactant and product
         self.answers = []
 
         # the build() function builds a matrix using the information from self.parsed_reactants and self.parsed_products
         self.build()
 
-        # in the build() function, if the reaction is not balance-able, then the self.possible boolean variable is set to false to indicate this; if it is not possible, it is misleading to generate a list of answers and hence this is skipped using 'return'
+        # in the build() function, if the equation is not balance-able, then the self.possible boolean variable is set to false to indicate this; if it is not possible, it is misleading to generate a list of answers and hence this is skipped using 'return'
         if not self.possible:
             return 
 
-        # if the reaction is balance-able, then the coefficients are extracted using the extract_answers() method and stored in the self.answers list
+        # if the equation is balance-able, then the coefficients are extracted using the extract_answers() method and stored in the self.answers list
         self.answers = self.extract_answers()
     
     # gaussian elimination operates on the matrix (self.grid) created by build() in order to reduce it to row-echelon form
@@ -50,6 +54,7 @@ class Reaction:
         ''' 
             Reduces self.grid to row-echelon form
         '''
+
         # row, col store the dimensions of the grid over which to iterate
         row = len(self.grid)
         col = len(self.grid[0])
@@ -62,11 +67,12 @@ class Reaction:
                 for k in range(col):
                     self.grid[j][k] += ratio*self.grid[i][k]
 
-    # if the last row in the matrix is entirely just composed of 0s, this means that the reaction is already balanced - this function checks for this 
+    # if the last row in the matrix is entirely just composed of 0s, this means that the equation is already balanced - this function checks for this 
     def isBalanced(self):
         '''
             Returns whether chemical equation is balanced or not based on self.grid
         '''
+
         # if at any point in the last row, a non-zero number occurs, the function returns False based on the heuristic mentioned 
         for i in range(len(self.grid[0])-1):
             if self.grid[len(self.grid)-1][i].eval() != 0:
@@ -80,9 +86,10 @@ class Reaction:
         '''
             Returns a list of coefficients for the reactants and products in a given chemical equation 
         '''
-        # for the edge case for when the reaction is already balanced, the self.isBalanced() method determines this 
+
+        # for the edge case for when the equation is already balanced, the self.isBalanced() method determines this 
         if self.isBalanced():
-            # if the reaction is balanced, then the reaction is left unchanged and coefficients of 1 are passed to a list and returned
+            # if the equation is balanced, then the equation is left unchanged and coefficients of 1 are passed to a list and returned
             rn = [1 for i in range(self.len)]
             return rn
 
@@ -114,11 +121,12 @@ class Reaction:
         # the coefficients generated are generated from back to front and hence they are returned in a reversed order
         return answers[::-1]
 
-    # this function creates a matrix using information stored in chemical reactions 
+    # this function creates a matrix using information stored in the chemical equation 
     def build(self):
         '''
             Builds a matrix in self.grid according to the reactants and products
         '''
+
         # this dictionary maintains the unique ID assigned to each distinct
         indexElements = dict()
         
@@ -161,7 +169,7 @@ class Reaction:
                         self.grid[[i, j]] = self.grid[[j, i]]
                         break
 
-            # if after attempts to swap, the current value in question is still on the diagonal (a swap was not possible), the reaction is not balance-able as the matrix cannot be solved and the self.possible boolean variable is set to False and a 'return' statement is used to prevent gaussian elimination from being performed
+            # if after attempts to swap, the current value in question is still on the diagonal (a swap was not possible), the chemical equation is not balance-able as the matrix cannot be solved and the self.possible boolean variable is set to False and a 'return' statement is used to prevent gaussian elimination from being performed
             if self.grid[i][i].eval() == 0:
                 self.possible = False
                 return 
@@ -173,8 +181,10 @@ class Reaction:
     def parser(self, oneSideChemicalEquation):
         '''
             :param oneSideChemicalEquation: string representing one side of a chemical equation, either reactants or products
+            
             Returns a dictionary representing the count of each element in the individual chemical entities in oneSideChemicalEquation
         '''
+
         species = oneSideChemicalEquation.split('+')
         cnt_char = dict()
         iterNum = 1
@@ -228,3 +238,74 @@ class Reaction:
                     cnt_char[key].append([i, 0])
             cnt_char[key].sort()
         return cnt_char
+
+class BalancedChemicalEquation:
+    '''
+        Stores all relevant func 
+    '''
+
+    # constructor
+    def __init__(self, reactants, products):
+        # creating a reactants attribute to store the reactants provided
+        self.reactants = reactants.replace(' ', '')
+
+        # creating a reactants attribute to store the reactants provided
+        self.products = products.replace(' ', '')
+        
+        # creating a list to store possible answers
+        self.possible_answers = []
+
+        # creating variables to store the coefficients associated with the balancing process
+        self.answerValues = []
+        self.answerString = ""
+        
+        # calling the tabulate method to determine an answer to the balancing of the given chemical equation (reactants and products)
+        self.tabulate()
+
+        # if there are no solutions to the given chemical equation, then 
+        if len(self.answerValues) == 0:
+            return
+
+        # calling the determine method to get the individual coefficients in the balanced chemical equation
+        self.determine()
+
+    def tabulate(self):
+        # looping through permutations of the 
+        for combination in list(itertools.permutations(self.products.split('+'))):
+
+            # converting the permutation to a string containing the reactants 
+            rn = ""
+            for item in combination:
+                rn += item + '+'
+            
+            # getting rid of the final (and extraneous) plus sign
+            rn = rn[:-1]
+            
+            # appending a Reaction object to the possible_answers attribute
+            self.possible_answers.append(ChemicalEquation(self.reactants, rn))
+
+        # looping through the possible reactions in the possible_answers attribute to see whether the 
+        for potential_reaction in self.possible_answers:
+            if potential_reaction.possible:
+                self.answerValues = [potential_reaction.reactants, potential_reaction.products, potential_reaction.answers]
+                break
+
+    def determine(self):
+        ptr = 0
+        for species in self.answerValues[0].split('+'):
+            if self.answerValues[2][ptr].eval() == 1:
+                self.answerString += species
+            else:
+                self.answerString += str(self.answerValues[2][ptr]) + species
+            ptr += 1
+            self.answerString += '+'
+        self.answerString = self.answerString[:-1]
+        self.answerString += ' -> '
+        for species in self.answerValues[1].split('+'):
+            if self.answerValues[2][ptr].eval() == 1:
+                self.answerString += species
+            else:
+                self.answerString += str(self.answerValues[2][ptr]) + species
+            ptr += 1
+            self.answerString += '+'
+        self.answerString = self.answerString[:-1]

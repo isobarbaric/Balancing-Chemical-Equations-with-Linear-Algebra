@@ -6,11 +6,12 @@ class Fraction:
         Stores all of the relevant functionality needed to model fractions
     '''
 
-    # initializing a Fraction object with default denominator being 1
+    # constructor
     def __init__(self, num, den = 1):
         '''
             :param num: numerator of the fraction being initialized
             :param den: denominator of the fraction being initialized
+
             Returns a Fraction object
         '''
 
@@ -21,11 +22,14 @@ class Fraction:
         self.num = int(num/math.gcd(num, den))
         self.den = int(den/math.gcd(den, num))
 
+    # supporting the addition operation between Fraction objects
     def __add__(self, other):
         '''
             :param other: a Fraction object to be added to the current Fraction object
+
             Overloads the addition operator for Fraction class
         '''
+
         # determining the numerator and denominator for the new fraction        
         nBottom = (self.den*other.den)/math.gcd(self.den, other.den)
         nTop = self.num*(nBottom/self.den) + other.num*(nBottom/other.den)
@@ -43,21 +47,27 @@ class Fraction:
         if (nBottom < 0):
             nTop *= -1
             nBottom *= -1
+
         return Fraction(int(nTop), int(nBottom))
 
+    # supporting the subtraction operation between Fraction objects
     def __sub__(self, other):
         '''
             :param other: a Fraction object to be subtracted from the current Fraction object
+
             Overloads the subtraction operator for Fraction class
         '''
+
         return self.__add__(-1*other)
 
-
+    # supporting the multiplication operation between Fraction objects (first order)
     def __mul__(self, other):
         '''
             :param other: an integer or Fraction to be multiplied with the current Fraction object
+
             Overloads the multiplication operator for Fraction class
         '''
+
         # if the entity being multiplied is a numerical value, then it is to be dealt with separately from the case where the entity is another fraction
         if isinstance(other, (int, float)):
             nTop = self.num*other
@@ -80,21 +90,27 @@ class Fraction:
         if (nBottom < 0):
             nTop *= -1
             nBottom *= -1
+
         return Fraction(int(nTop), int(nBottom))
 
-
+    # supporting the multiplication operation between Fraction objects (second order)
     def __rmul__(self, other): 
         '''
             :param other: an integer Fraction object to be added to the current Fraction object
+
             Builds on top of the multiplication operator for fractions so that multiplication can occur both with integers in front and integers after a fraction object
         '''
+
         return self.__mul__(other)
 
+    # supporting the division operation between Fraction objects
     def __truediv__(self, other):
         '''
             :param other: an integer or Fraction to be multiplied with the current Fraction object
+
             Overloads the division operator for Fraction class
         '''
+
         # determines the numerator and denominator for the new fraction
         nTop = self.num*other.den
         nBottom = self.den*other.num
@@ -112,8 +128,10 @@ class Fraction:
         if (nBottom < 0):
             nTop *= -1
             nBottom *= -1
+
         return Fraction(int(nTop), int(nBottom))
 
+    # creating a custom representation for Fraction objects
     def __repr__(self):
         '''
             Defines how a fraction is to be printed 
@@ -122,6 +140,7 @@ class Fraction:
         # if the denominator is equal to 1, then the numerator alone can be outputted 
         if self.den == 1:
             return str(self.num)
+
         # if the denominator is not equal to 1, then the numerator and denominator are to be outputted
         return str(self.num) + '/' + str(self.den)
 
@@ -130,4 +149,5 @@ class Fraction:
         '''
             Returns the numerical value of the current Fraction object
         '''
+
         return self.num/self.den
