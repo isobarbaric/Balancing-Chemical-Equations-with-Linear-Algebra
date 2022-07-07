@@ -6,19 +6,9 @@ import numpy as np
 import itertools
 
 class ChemicalEquation:
-    '''
-        Stores all relevant functionality needed to balance a chemical reaction  
-    '''
 
     # constructor
     def __init__(self, reactants, products):
-        ''' 
-            :param reactants: string representing the reactant side of the chemical equation
-            :param products: string representing the product side of the chemical equation
-
-            Returns a ChemicalEquation object
-        '''
-
         # self.reactants and self.products maintain a copy of the reactants and products string 
         self.reactants = reactants 
         self.products = products 
@@ -51,10 +41,6 @@ class ChemicalEquation:
     
     # gaussian elimination operates on the matrix (self.grid) created by build() in order to reduce it to row-echelon form
     def gaussian_elimination(self):
-        ''' 
-            Reduces self.grid to row-echelon form
-        '''
-
         # row, col store the dimensions of the grid over which to iterate
         row = len(self.grid)
         col = len(self.grid[0])
@@ -69,9 +55,6 @@ class ChemicalEquation:
 
     # if the last row in the matrix is entirely just composed of 0s, this means that the equation is already balanced - this function checks for this 
     def isBalanced(self):
-        '''
-            Returns whether chemical equation is balanced or not based on self.grid
-        '''
 
         # if at any point in the last row, a non-zero number occurs, the function returns False based on the heuristic mentioned 
         for i in range(len(self.grid[0])-1):
@@ -83,10 +66,6 @@ class ChemicalEquation:
 
     # the extract_answers() method takes the reduced matrix and extracts the individual coefficient for each reactant or product
     def extract_answers(self): 
-        '''
-            Returns a list of coefficients for the reactants and products in a given chemical equation 
-        '''
-
         # for the edge case for when the equation is already balanced, the self.isBalanced() method determines this 
         if self.isBalanced():
             # if the equation is balanced, then the equation is left unchanged and coefficients of 1 are passed to a list and returned
@@ -123,10 +102,6 @@ class ChemicalEquation:
 
     # this function creates a matrix using information stored in the chemical equation 
     def build(self):
-        '''
-            Builds a matrix in self.grid according to the reactants and products
-        '''
-
         # this dictionary maintains the unique ID assigned to each distinct
         indexElements = dict()
         
@@ -179,12 +154,6 @@ class ChemicalEquation:
 
     # the parser function goes through the reactants and products and identifies the counts for each particular element
     def parser(self, oneSideChemicalEquation):
-        '''
-            :param oneSideChemicalEquation: string representing one side of a chemical equation, either reactants or products
-            
-            Returns a dictionary representing the count of each element in the individual chemical entities in oneSideChemicalEquation
-        '''
-
         species = oneSideChemicalEquation.split('+')
         cnt_char = dict()
         iterNum = 1
@@ -240,9 +209,6 @@ class ChemicalEquation:
         return cnt_char
 
 class BalancedChemicalEquation:
-    '''
-        Stores all relevant func 
-    '''
 
     # constructor
     def __init__(self, reactants, products):
@@ -298,7 +264,7 @@ class BalancedChemicalEquation:
             else:
                 self.answerString += str(self.answerValues[2][ptr]) + species
             ptr += 1
-            self.answerString += '+'
+            self.answerString += ' + '
         self.answerString = self.answerString[:-1]
         self.answerString += ' -> '
         for species in self.answerValues[1].split('+'):
@@ -307,5 +273,5 @@ class BalancedChemicalEquation:
             else:
                 self.answerString += str(self.answerValues[2][ptr]) + species
             ptr += 1
-            self.answerString += '+'
+            self.answerString += ' + '
         self.answerString = self.answerString[:-1]
