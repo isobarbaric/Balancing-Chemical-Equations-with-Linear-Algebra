@@ -17,14 +17,14 @@ to run the program through the terminal:
 
 for Linux and Mac:
 ```
-  cd Dynamic-Programming-and-the-Periodic-Table
+  cd Balancing-Chemical-Equations-with-Linear-Algebra
   pip3 install -r requirements.txt
   python3 main.py    
 ```
 
 for Windows:
 ```
-  cd Dynamic-Programming-and-the-Periodic-Table
+  cd Balancing-Chemical-Equations-with-Linear-Algebra
   pip install -r requirements.txt
   python main.py
 ```
